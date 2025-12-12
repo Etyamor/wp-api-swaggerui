@@ -157,7 +157,7 @@ class WP_API_SwaggerUI
     {
 
         if (mb_strpos($endpoint, '(?P<') !== false) {
-            $endpoint = preg_replace_callback('/\(\?P\<(.*?)>(.*)\)+/', function ($match) use ($endpoint) {
+            $endpoint = preg_replace_callback('/\(\?P\<(.*?)>(.*?)\)+/', function ($match) use ($endpoint) {
                 return '{' . $match[1] . '}';
             }, $endpoint);
         }
@@ -228,7 +228,7 @@ class WP_API_SwaggerUI
                     $tags = $args['tags'];
                 }
 
-                $responses =$this->getResponses($methodEndpoint);
+                $responses = $this->getResponses($methodEndpoint);
                 if (isset($arg['responses'])) {
                     $responses = $arg['responses'];
                 }
@@ -255,7 +255,7 @@ class WP_API_SwaggerUI
     {
         $path_params = [];
 
-        if (mb_strpos($endpoint, '(?P<') !== false && (preg_match_all('/\(\?P\<(.*?)>(.*)\)/', $endpoint, $matches))) {
+        if (mb_strpos($endpoint, '(?P<') !== false && (preg_match_all('/\(\?P\<(.*?)>(.*?)\)+/', $endpoint, $matches))) {
             foreach ($matches[1] as $order => $match) {
                 $type = strpos(mb_strtolower($matches[2][$order]), '\d') !== false ? 'integer' : 'string';
                 $params = array(
@@ -417,7 +417,8 @@ class WP_API_SwaggerUI
         return $securities;
     }
 
-    public function getResponses( $methodEndpoint ) {
+    public function getResponses($methodEndpoint)
+    {
         return apply_filters('swagger_api_responses_' . $methodEndpoint, array(
             '200' => ['description' => 'OK'],
             '404' => ['description' => 'Not Found'],
